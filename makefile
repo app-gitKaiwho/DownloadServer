@@ -10,7 +10,11 @@ OBJECTS := $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(SOURCES))
 EXECUTABLE := $(BIN_DIR)$(BINARY)
 
 prep:
-	mkdir bin csv dl download-archive obj
+	@if [ ! -d bin ]; then mkdir bin; fi
+	@if [ ! -d csv ]; then mkdir csv; fi
+	@if [ ! -d dl ]; then mkdir dl; fi
+	@if [ ! -d download-archive ]; then mkdir download-archive; fi
+	@if [ ! -d obj ]; then mkdir obj; fi
 
 all: $(EXECUTABLE) prep
 
