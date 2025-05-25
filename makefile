@@ -9,7 +9,10 @@ SOURCES := $(wildcard $(SRC_DIR)*.cpp)
 OBJECTS := $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(SOURCES))
 EXECUTABLE := $(BIN_DIR)$(BINARY)
 
-all: $(EXECUTABLE)
+prep:
+	mkdir bin csv dl download-archive obj
+
+all: $(EXECUTABLE) prep
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	if [ ! -d $(OBJ_DIR) ]; then mkdir $(OBJ_DIR); fi
@@ -28,4 +31,4 @@ up: $(EXECUTABLE)
 
 re: clean all
 
-.PHONY: all clean re
+.PHONY: all clean re prep
