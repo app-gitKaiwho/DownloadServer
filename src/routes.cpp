@@ -19,7 +19,7 @@ CROW_ROUTE(app, "/dl").methods("POST"_method)([](const crow::request& req) {
 
     std::string artist = body["artist"].s();
     std::string url = body["url"].s();
-    std::string command = "yt-dlp -x --audio-format mp4a --download-archive ./download-archive/downloaded.txt --add-metadata --no-overwrites -o \"./dl/"+artist+"/%(title)s.%(ext)s\" \"" + url + "\"";
+    std::string command = "yt-dlp -x --audio-format flac --download-archive ./download-archive/downloaded.txt --add-metadata --no-overwrites -o \"./dl/"+artist+"/%(title)s.%(ext)s\" \"" + url + "\"";
 
     int result = std::system(command.c_str());
 
