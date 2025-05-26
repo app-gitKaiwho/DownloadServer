@@ -158,7 +158,7 @@
         });
 
         function handleDownload(btn, { artist, song, url }) {
-            if (!url || url == "undefined") {
+            if (!url) {
                 console.error('No URL found!');
                 return;
             }
@@ -169,7 +169,7 @@
             fetch('/dl', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ artist, url })
+                body: JSON.stringify({ artist, url, song})
             })
                 .then(response => {
                     if (!response.ok) throw new Error('Request failed');

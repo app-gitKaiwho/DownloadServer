@@ -1,49 +1,38 @@
-#include "../inc/server.hpp"
-#include <cstdlib>
-#include <thread>
-#include <chrono>
+#include "../inc/utils.hpp"
+#include "../inc/dl.hpp"
 
+
+//simple routes, run the app on threads
 void routes(crow::SimpleApp app)
 {
+    //Main page, allow csv to be loaded
     CROW_ROUTE(app, "/csv/")([](){
-        auto page = crow::mustache::load("./csv.html");
+        crow::mustache::template_t page = crow::mustache::load("./csv.html");
         return page.render();
     });
 
-CROW_ROUTE(app, "/dl").methods("POST"_method)([](const crow::request& req) {
-    auto body = crow::json::load(req.body);
-    
-    if (!body) {
-        return crow::response(400, "Invalid JSON payload");
-    }
+    //get json on format {artist, url, song} can lack url if named as "undefined"
+    CROW_ROUTE(app, "/dl").methods("POST"_method)([](const crow::request& req) {
 
-    std::string artist = body["artist"].s();
-    std::string url = body["url"].s();
-    std::string command = "yt-dlp -x --audio-format flac --download-archive ./download-archive/downloaded.txt --add-metadata --no-overwrites -o \"./dl/"+artist+"/%(title)s.%(ext)s\" \"" + url + "\"";
+        crow::json::rvalue body = crow::json::load(req.body);
 
-    int result = std::system(command.c_str());
-
-    if (result == 0)
-        return crow::response(200, "downloaded successfully.");
-    else
-        return crow::response(500, "Download failed");
-});
+        if (!body)
+            return crow::response(400, "Invalid JSON payload");
+        if (ytdl(body))
+            return crow::response(200, "downloaded successfully.");
+        else
+            return crow::response(500, "Download failed");
+    });
 
 
+    //upload the csv to the srv, pretty useless, it was a try to see if I could do it. I can
     CROW_ROUTE(app, "/upload").methods("POST"_method)([](const crow::request& req) {
 
-        std::string content_type = req.get_header_value("Content-Type");
-        std::string boundary = "--" + content_type.substr(content_type.find("boundary=") + 9);
-
-        std::string file_content = extract_file_content(req.body, boundary);
-
-        std::cout << get_current_datetime() << std::endl;
         std::ofstream out("./csv/uploaded_" + get_current_datetime() + ".csv");
-        out << file_content;
+        out << parseheader(req);
         out.close();
 
         return crow::response(200, "File uploaded successfully.");
     });
-
     app.port(4242).multithreaded().run();
 }
