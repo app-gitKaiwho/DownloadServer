@@ -7,7 +7,7 @@ void routes(crow::SimpleApp app)
 {
     //Main page, allow csv to be loaded
     CROW_ROUTE(app, "/csv/")([](){
-        crow::mustache::template_t page = crow::mustache::load("./csv.html");
+        crow::mustache::template_t page = crow::mustache::load("./oldfullcsv.html");
         return page.render();
     });
 
