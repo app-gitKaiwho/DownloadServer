@@ -11,6 +11,30 @@ void routes(crow::SimpleApp app)
         return page.render();
     });
 
+
+    CROW_ROUTE(app, "/static/<string>")([](const std::string& filename) {
+    std::ifstream file("./static/" + filename, std::ios::binary);
+    if (!file.is_open()) {
+        return crow::response(404);
+    }
+
+    std::ostringstream contents;
+    contents << file.rdbuf();
+    file.close();
+
+    crow::response res;
+    res.code = 200;
+    res.write(contents.str());
+
+if (filename.substr(filename.size() - 4) == ".css") {
+        res.add_header("Content-Type", "text/css");
+    } else if (filename.substr(filename.size() - 3) == ".js") {
+        res.add_header("Content-Type", "application/javascript");
+    }
+    return res;
+});
+
+
     //get json on format {artist, url, song} can lack url if named as "undefined"
     CROW_ROUTE(app, "/dl").methods("POST"_method)([](const crow::request& req) {
 

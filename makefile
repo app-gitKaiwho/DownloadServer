@@ -1,6 +1,7 @@
 BINARY := CrowServer
 CXX := g++
 FLAGS := -Wall -Wextra -Werror -O0
+LINK := -lcurl
 SRC_DIR := ./src/
 INC_DIR := ./inc/
 OBJ_DIR := ./obj/
@@ -20,11 +21,11 @@ all: $(EXECUTABLE) prep
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	if [ ! -d $(OBJ_DIR) ]; then mkdir $(OBJ_DIR); fi
-	$(CXX) $(FLAGS) -I$(INC_DIR) -c $< -o $@
+	$(CXX) $(FLAGS) $(LINK) -I$(INC_DIR) -c $< -o $@
 
 $(EXECUTABLE): $(OBJECTS)
 	if [ ! -d $(BIN_DIR) ]; then mkdir $(BIN_DIR); fi
-	$(CXX) $(FLAGS) $^ -o $@
+	$(CXX) $(FLAGS) $(LINK) $^ -o $@
 
 clean:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 	rm -rf $(OBJ_DIR)* $(BIN_DIR)* ./dl/*
